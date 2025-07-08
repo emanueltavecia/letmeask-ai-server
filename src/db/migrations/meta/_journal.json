@@ -8,6 +8,13 @@
       "when": 1751932248824,
       "tag": "0000_deep_terrax",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1751984301798,
+      "tag": "0001_loud_black_panther",
+      "breakpoints": true
     }
   ]
 }
