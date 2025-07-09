@@ -15,6 +15,13 @@
       "when": 1751984301798,
       "tag": "0001_loud_black_panther",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1752066651100,
+      "tag": "0002_nice_agent_zero",
+      "breakpoints": true
     }
   ]
 }
