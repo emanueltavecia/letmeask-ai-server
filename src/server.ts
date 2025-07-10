@@ -12,6 +12,7 @@ import { createQuestionRoute } from './http/routes/create-question'
 import { uploadAudioRoute } from './http/routes/upload-audio'
 import { fastifyMultipart } from '@fastify/multipart'
 import type { IncomingMessage, ServerResponse } from 'node:http'
+import { env } from './env'
 
 const app = fastify({ logger: false }).withTypeProvider<ZodTypeProvider>()
 
@@ -33,6 +34,15 @@ app.register(createRoomRoute)
 app.register(getRoomQuestionsRoute)
 app.register(createQuestionRoute)
 app.register(uploadAudioRoute)
+
+if (import.meta.url === `file://${process.argv[1]}`) {
+  app
+    .listen({ port: env.PORT })
+    .catch((err) => {
+      process.stderr.write(`Error starting server: ${err}\n`)
+      process.exit(1)
+    })
+}
 
 export default async (req: IncomingMessage, res: ServerResponse) => {
   await app.ready()

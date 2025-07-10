@@ -4,8 +4,8 @@
   "main": "dist/server.js",
   "type": "module",
   "scripts": {
-    "build": "tsc",
-    "start": "node --env-file .env.production --no-warnings dist/server.js",
+    "build": "tsc && node scripts/fix-imports.mjs",
+    "start": "node --env-file .env --no-warnings dist/server.js",
     "dev": "node --env-file .env --experimental-strip-types --no-warnings --watch src/dev-server.ts",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
@@ -20,6 +20,7 @@
     "@types/node": "^24.0.10",
     "drizzle-kit": "^0.31.4",
     "drizzle-seed": "^0.3.1",
+    "glob": "^11.0.3",
     "husky": "^9.1.7",
     "typescript": "^5.8.3",
     "ultracite": "5.0.32"
