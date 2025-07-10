@@ -11,6 +11,13 @@ import { createQuestionRoute } from '../dist/http/routes/create-question.js'
 import { uploadAudioRoute } from '../dist/http/routes/upload-audio.js'
 import { fastifyMultipart } from '@fastify/multipart'
 
+// Configuração para Vercel desabilitar body parsing
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+}
+
 let appInstance = null
 
 async function getApp() {
@@ -18,13 +25,23 @@ async function getApp() {
     return appInstance
   }
 
-  const app = fastify({ logger: false })
+  const app = fastify({ 
+    logger: false,
+    // Configurações específicas para Vercel
+    disableRequestLogging: true,
+    trustProxy: true
+  })
 
   await app.register(fastifyCors, {
     origin: true,
   })
 
-  await app.register(fastifyMultipart)
+  await app.register(fastifyMultipart, {
+    // Configurações específicas para lidar com multipart no Vercel
+    limits: {
+      fileSize: 10 * 1024 * 1024, // 10MB
+    },
+  })
 
   app.setSerializerCompiler(serializerCompiler)
   app.setValidatorCompiler(validatorCompiler)
@@ -47,30 +64,16 @@ async function getApp() {
 async function handleRequest(req, res) {
   const app = await getApp()
   
-  // Para requisições multipart, precisamos passar o req original para o Fastify
-  // conseguir processar corretamente os arquivos
-  let payload
-  
-  if (req.method === 'POST' || req.method === 'PUT' || req.method === 'PATCH') {
-    const contentType = req.headers['content-type'] || ''
-    
-    if (!contentType.includes('multipart/form-data')) {
-      payload = req.body
-    }
-  }
-
+  // Com bodyParser: false, o Vercel não vai parsear o body automaticamente
+  // permitindo que o Fastify processe multipart corretamente
   const response = await app.inject({
     method: req.method || 'GET',
     url: req.url || '/',
     headers: req.headers,
-    payload,
-    // Para multipart, passamos o request original
-    ...(req.headers['content-type']?.includes('multipart/form-data') && {
-      simulate: {
-        split: true,
-      },
-      remoteAddress: req.socket?.remoteAddress,
-    }),
+    payload: req,
+    simulate: {
+      split: true,
+    },
   })
 
   res.status(response.statusCode)
