@@ -1,6 +1,13 @@
 #!/usr/bin/env node
 
-import { readFileSync, writeFileSync } from 'node:fs'
+import {
+  readFileSync,
+  writeFileSync,
+  cpSync,
+  existsSync,
+  mkdirSync,
+  renameSync,
+} from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
 import { glob } from 'glob'
@@ -8,6 +15,7 @@ import { glob } from 'glob'
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 const distDir = join(__dirname, '../dist')
+const apiDir = join(__dirname, '../api')
 
 // Função para corrigir importações em um arquivo
 function fixImports(filePath) {
@@ -72,3 +80,24 @@ for (const file of jsFiles) {
 }
 
 process.stdout.write(`Fixed imports in ${jsFiles.length} files\n`)
+
+// Cria a pasta api se não existir
+if (!existsSync(apiDir)) {
+  mkdirSync(apiDir, { recursive: true })
+  process.stdout.write('Created api directory\n')
+}
+
+// Copia todos os arquivos de dist para api
+cpSync(distDir, apiDir, { recursive: true, force: true })
+process.stdout.write('Copied dist files to api directory\n')
+
+// Renomeia server.js para index.js na pasta api, se existir
+const serverPath = join(apiDir, 'server.js')
+const indexPath = join(apiDir, 'index.js')
+
+if (existsSync(serverPath)) {
+  renameSync(serverPath, indexPath)
+  process.stdout.write('Renamed server.js to index.js in api directory\n')
+} else {
+  process.stdout.write('server.js not found in api directory\n')
+}
