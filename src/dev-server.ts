@@ -5,18 +5,18 @@ import {
   validatorCompiler,
   type ZodTypeProvider,
 } from 'fastify-type-provider-zod'
+import { env } from './env.ts'
 import { getRoomsRoute } from './http/routes/get-rooms.ts'
 import { createRoomRoute } from './http/routes/create-room.ts'
 import { getRoomQuestionsRoute } from './http/routes/get-room-questions.ts'
 import { createQuestionRoute } from './http/routes/create-question.ts'
 import { uploadAudioRoute } from './http/routes/upload-audio.ts'
 import { fastifyMultipart } from '@fastify/multipart'
-import type { IncomingMessage, ServerResponse } from 'node:http'
 
-const app = fastify({ logger: false }).withTypeProvider<ZodTypeProvider>()
+const app = fastify().withTypeProvider<ZodTypeProvider>()
 
 app.register(fastifyCors, {
-  origin: true,
+  origin: 'http://localhost:5173',
 })
 
 app.register(fastifyMultipart)
@@ -34,7 +34,4 @@ app.register(getRoomQuestionsRoute)
 app.register(createQuestionRoute)
 app.register(uploadAudioRoute)
 
-export default async (req: IncomingMessage, res: ServerResponse) => {
-  await app.ready()
-  app.server.emit('request', req, res)
-}
+app.listen({ port: env.PORT })
