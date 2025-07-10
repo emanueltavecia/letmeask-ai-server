@@ -1,13 +1,6 @@
 #!/usr/bin/env node
 
-import {
-  readFileSync,
-  writeFileSync,
-  cpSync,
-  existsSync,
-  mkdirSync,
-  renameSync,
-} from 'node:fs'
+import { readFileSync, writeFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
 import { glob } from 'glob'
@@ -15,7 +8,6 @@ import { glob } from 'glob'
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 const distDir = join(__dirname, '../dist')
-const appDir = join(__dirname, '../app')
 
 // Função para corrigir importações em um arquivo
 function fixImports(filePath) {
@@ -80,24 +72,3 @@ for (const file of jsFiles) {
 }
 
 process.stdout.write(`Fixed imports in ${jsFiles.length} files\n`)
-
-// Cria a pasta app se não existir
-if (!existsSync(appDir)) {
-  mkdirSync(appDir, { recursive: true })
-  process.stdout.write('Created app directory\n')
-}
-
-// Copia todos os arquivos de dist para app
-cpSync(distDir, appDir, { recursive: true, force: true })
-process.stdout.write('Copied dist files to app directory\n')
-
-// Renomeia server.js para index.js na pasta app, se existir
-const serverPath = join(appDir, 'server.js')
-const indexPath = join(appDir, 'index.js')
-
-if (existsSync(serverPath)) {
-  renameSync(serverPath, indexPath)
-  process.stdout.write('Renamed server.js to index.js in app directory\n')
-} else {
-  process.stdout.write('server.js not found in app directory\n')
-}
