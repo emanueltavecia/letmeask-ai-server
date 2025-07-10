@@ -17,10 +17,5 @@
   ],
   "env": {
     "NODE_ENV": "production"
-  },
-  "functions": {
-    "src/server.ts": {
-      "runtime": "nodejs22.x"
-    }
   }
 }
