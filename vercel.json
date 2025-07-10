@@ -1,12 +1,5 @@
 {
   "version": 2,
-  "buildCommand": "npm run build && npm start",
-  "builds": [
-    {
-      "src": "dist/server.js",
-      "use": "@vercel/node"
-    }
-  ],
   "routes": [
     {
       "src": "/(.*)",
