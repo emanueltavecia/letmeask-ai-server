@@ -9,11 +9,9 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 const distDir = join(__dirname, '../dist')
 
-// Função para corrigir importações em um arquivo
 function fixImports(filePath) {
   let content = readFileSync(filePath, 'utf8')
 
-  // Substitui importações específicas que precisam de .js
   content = content.replace(
     /from '\.\/http\/routes\/get-rooms'/g,
     "from './http/routes/get-rooms.js'"
@@ -63,10 +61,8 @@ function fixImports(filePath) {
   writeFileSync(filePath, content, 'utf8')
 }
 
-// Encontra todos os arquivos .js no diretório dist
 const jsFiles = glob.sync('**/*.js', { cwd: distDir, absolute: true })
 
-// Corrige as importações em cada arquivo
 for (const file of jsFiles) {
   fixImports(file)
 }
