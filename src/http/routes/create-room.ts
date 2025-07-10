@@ -1,6 +1,6 @@
 import type { FastifyPluginCallbackZod } from 'fastify-type-provider-zod'
-import { db } from '../../db/connection.ts'
-import { schema } from '../../db/schema/index.ts'
+import { db } from '../../db/connection'
+import { schema } from '../../db/schema/index'
 import { z } from 'zod/v4'
 
 export const createRoomRoute: FastifyPluginCallbackZod = (app) => {
@@ -17,10 +17,13 @@ export const createRoomRoute: FastifyPluginCallbackZod = (app) => {
     async ({ body }, reply) => {
       const { name, description } = body
 
-      const result = await db.insert(schema.rooms).values({
-        name,
-        description,
-      }).returning()
+      const result = await db
+        .insert(schema.rooms)
+        .values({
+          name,
+          description,
+        })
+        .returning()
 
       const insertedRoom = result[0]
 

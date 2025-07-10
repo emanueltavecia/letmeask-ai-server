@@ -1,8 +1,8 @@
 import type { FastifyPluginCallbackZod } from 'fastify-type-provider-zod'
-import { db } from '../../db/connection.ts'
-import { schema } from '../../db/schema/index.ts'
+import { db } from '../../db/connection'
+import { schema } from '../../db/schema/index'
 import { z } from 'zod/v4'
-import { generateAnswer, generateEmbeddings } from '../../services/gemini.ts'
+import { generateAnswer, generateEmbeddings } from '../../services/gemini'
 import { and, eq, sql } from 'drizzle-orm'
 
 export const createQuestionRoute: FastifyPluginCallbackZod = (app) => {

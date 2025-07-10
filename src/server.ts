@@ -5,11 +5,11 @@ import {
   validatorCompiler,
   type ZodTypeProvider,
 } from 'fastify-type-provider-zod'
-import { getRoomsRoute } from './http/routes/get-rooms.ts'
-import { createRoomRoute } from './http/routes/create-room.ts'
-import { getRoomQuestionsRoute } from './http/routes/get-room-questions.ts'
-import { createQuestionRoute } from './http/routes/create-question.ts'
-import { uploadAudioRoute } from './http/routes/upload-audio.ts'
+import { getRoomsRoute } from './http/routes/get-rooms'
+import { createRoomRoute } from './http/routes/create-room'
+import { getRoomQuestionsRoute } from './http/routes/get-room-questions'
+import { createQuestionRoute } from './http/routes/create-question'
+import { uploadAudioRoute } from './http/routes/upload-audio'
 import { fastifyMultipart } from '@fastify/multipart'
 import type { IncomingMessage, ServerResponse } from 'node:http'
 
