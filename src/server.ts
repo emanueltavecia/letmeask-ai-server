@@ -36,5 +36,5 @@ app.register(uploadAudioRoute)
 
 export default async (req: IncomingMessage, res: ServerResponse) => {
   await app.ready()
-  app.server.emit('request', req, res)
+  app.routing(req, res)
 }
