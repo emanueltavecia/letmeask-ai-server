@@ -46,6 +46,7 @@ async function getApp() {
 
 export default async (req, res) => {
   try {
+    return res.status(200).json({ envs: process.env })
     const app = await getApp()
     const response = await app.inject({
       method: req.method || 'GET',
