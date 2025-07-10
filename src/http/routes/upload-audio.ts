@@ -16,14 +16,13 @@ export const uploadAudioRoute: FastifyPluginCallbackZod = (app) => {
     },
     async (request, reply) => {
       const { roomId } = request.params
-      
-      // Debug para entender o que está chegando na requisição
+
       const contentType = request.headers['content-type']
-      
+
       if (!contentType?.includes('multipart/form-data')) {
         throw new Error('Content-Type must be multipart/form-data')
       }
-      
+
       const audio = await request.file()
 
       if (!audio) {

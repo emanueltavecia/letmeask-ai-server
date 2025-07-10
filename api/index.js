@@ -11,7 +11,6 @@ import { createQuestionRoute } from '../dist/http/routes/create-question.js'
 import { uploadAudioRoute } from '../dist/http/routes/upload-audio.js'
 import { fastifyMultipart } from '@fastify/multipart'
 
-// Configuração para Vercel desabilitar body parsing
 export const config = {
   api: {
     bodyParser: false,
@@ -25,11 +24,10 @@ async function getApp() {
     return appInstance
   }
 
-  const app = fastify({ 
+  const app = fastify({
     logger: false,
-    // Configurações específicas para Vercel
     disableRequestLogging: true,
-    trustProxy: true
+    trustProxy: true,
   })
 
   await app.register(fastifyCors, {
@@ -37,7 +35,6 @@ async function getApp() {
   })
 
   await app.register(fastifyMultipart, {
-    // Configurações específicas para lidar com multipart no Vercel
     limits: {
       fileSize: 10 * 1024 * 1024, // 10MB
     },
@@ -63,9 +60,7 @@ async function getApp() {
 
 async function handleRequest(req, res) {
   const app = await getApp()
-  
-  // Com bodyParser: false, o Vercel não vai parsear o body automaticamente
-  // permitindo que o Fastify processe multipart corretamente
+
   const response = await app.inject({
     method: req.method || 'GET',
     url: req.url || '/',
