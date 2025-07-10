@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "tsc && node scripts/fix-imports.mjs",
-    "start": "node --env-file .env --no-warnings dist/server.js",
+    "start": "node --no-warnings dist/server.js",
     "dev": "node --env-file .env --experimental-strip-types --no-warnings --watch src/dev-server.ts",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
