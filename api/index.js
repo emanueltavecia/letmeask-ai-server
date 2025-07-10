@@ -44,35 +44,56 @@ async function getApp() {
   return app
 }
 
+async function handleRequest(req, res) {
+  const app = await getApp()
+  
+  // Para requisições multipart, precisamos passar o req original para o Fastify
+  // conseguir processar corretamente os arquivos
+  let payload
+  
+  if (req.method === 'POST' || req.method === 'PUT' || req.method === 'PATCH') {
+    const contentType = req.headers['content-type'] || ''
+    
+    if (!contentType.includes('multipart/form-data')) {
+      payload = req.body
+    }
+  }
+
+  const response = await app.inject({
+    method: req.method || 'GET',
+    url: req.url || '/',
+    headers: req.headers,
+    payload,
+    // Para multipart, passamos o request original
+    ...(req.headers['content-type']?.includes('multipart/form-data') && {
+      simulate: {
+        split: true,
+      },
+      remoteAddress: req.socket?.remoteAddress,
+    }),
+  })
+
+  res.status(response.statusCode)
+  for (const [key, value] of Object.entries(response.headers)) {
+    if (
+      typeof value === 'string' ||
+      typeof value === 'number' ||
+      Array.isArray(value)
+    ) {
+      res.setHeader(key, value)
+    }
+  }
+
+  if (response.headers['content-type']?.includes('application/json')) {
+    res.json(JSON.parse(response.payload))
+  } else {
+    res.send(response.payload)
+  }
+}
+
 export default async (req, res) => {
   try {
-    const app = await getApp()
-    const response = await app.inject({
-      method: req.method || 'GET',
-      url: req.url || '/',
-      headers: req.headers,
-      payload:
-        req.method === 'POST' || req.method === 'PUT' || req.method === 'PATCH'
-          ? req.body
-          : undefined,
-    })
-
-    res.status(response.statusCode)
-    for (const [key, value] of Object.entries(response.headers)) {
-      if (
-        typeof value === 'string' ||
-        typeof value === 'number' ||
-        Array.isArray(value)
-      ) {
-        res.setHeader(key, value)
-      }
-    }
-
-    if (response.headers['content-type']?.includes('application/json')) {
-      res.json(JSON.parse(response.payload))
-    } else {
-      res.send(response.payload)
-    }
+    await handleRequest(req, res)
   } catch {
     res.status(500).json({ error: 'Internal Server Error' })
   }
